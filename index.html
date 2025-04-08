@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pet Pointer</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background: #fafafa;
+      font-family: sans-serif;
+    }
+    #start-screen, #container {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #start-screen {
+      background: #fff;
+      flex-direction: column;
+      text-align: center;
+      z-index: 2;
+    }
+    #start-screen h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    #start-screen p {
+      font-size: 1.2rem;
+      max-width: 500px;
+      margin-bottom: 2rem;
+    }
+    #start-button {
+      font-size: 1.2rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      background: #0077cc;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .pet {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      object-fit: cover;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="start-screen">
+    <h1>Welcome to Pet Pointer!</h1>
+    <p>Move your mouse and let a random pet appear wherever you pause. Inspired by PointerPointer, this playful version lets dogs do the pointing... sort of.</p>
+    <button id="start-button">Start</button>
+  </div>
+
+  <div id="container" style="display: none;"></div>
+
+  <script>
+    const startButton = document.getElementById('start-button');
+    const startScreen = document.getElementById('start-screen');
+    const container = document.getElementById('container');
+
+    const petImages = [
+      'https://placedog.net/400/400?id=1',
+      'https://placedog.net/400/400?id=2',
+      'https://placedog.net/400/400?id=3',
+      'https://placedog.net/400/400?id=4',
+      'https://placedog.net/400/400?id=5',
+      'https://placedog.net/400/400?id=6',
+      'https://placedog.net/400/400?id=7',
+      'https://placedog.net/400/400?id=8',
+      'https://placedog.net/400/400?id=9',
+      'https://placedog.net/400/400?id=10'
+    ];
+
+    function getRandomImage() {
+      return petImages[Math.floor(Math.random() * petImages.length)] + `&t=${Date.now()}`;
+    }
+
+    let timeout;
+    let lastX = 0;
+    let lastY = 0;
+
+    function showPetAt(x, y) {
+      const oldPet = document.querySelector('.pet');
+      if (oldPet) oldPet.remove();
+
+      const img = document.createElement('img');
+      img.src = getRandomImage();
+      img.className = 'pet';
+      img.style.left = `${x - 200}px`;
+      img.style.top = `${y - 200}px`;
+
+      container.appendChild(img);
+    }
+
+    function startApp() {
+      startScreen.style.display = 'none';
+      container.style.display = 'flex';
+
+      document.addEventListener('mousemove', (e) => {
+        lastX = e.clientX;
+        lastY = e.clientY;
+        clearTimeout(timeout);
+
+        timeout = setTimeout(() => {
+          showPetAt(lastX, lastY);
+        }, 800);
+      });
+    }
+
+    startButton.addEventListener('click', startApp);
+  </script>
+</body>
+</html>
