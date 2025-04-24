@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pet Pointer</title>
   <style>
     html, body {
@@ -10,7 +10,7 @@
       padding: 0;
       height: 100%;
       overflow: hidden;
-      background: #fafafa;
+      background: #000;
       font-family: sans-serif;
     }
     #start-screen, #container {
@@ -49,17 +49,19 @@
     }
     .pet {
       position: absolute;
-      width: 400px;
-      height: 400px;
+      width: 100vw;
+      height: 100vh;
       object-fit: cover;
       display: block;
+      z-index: 1;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
   <div id="start-screen">
     <h1>Welcome to Pet Pointer!</h1>
-    <p>Move your mouse and let a random pet appear wherever you pause. Inspired by PointerPointer, this version lets dogs do the pointing... sort of.</p>
+    <p>Inspired by PointerPointer, but with dogs!</p>
     <button id="start-button">Start</button>
   </div>
 
@@ -70,39 +72,43 @@
     const startScreen = document.getElementById('start-screen');
     const container = document.getElementById('container');
 
-    const petImages = [
-      'https://placedog.net/400/400?id=1',
-      'https://placedog.net/400/400?id=2',
-      'https://placedog.net/400/400?id=3',
-      'https://placedog.net/400/400?id=4',
-      'https://placedog.net/400/400?id=5',
-      'https://placedog.net/400/400?id=6',
-      'https://placedog.net/400/400?id=7',
-      'https://placedog.net/400/400?id=8',
-      'https://placedog.net/400/400?id=9',
-      'https://placedog.net/400/400?id=10'
-    ];
+    function getDirectionImage(x, y) {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
 
-    function getRandomImage() {
-      return petImages[Math.floor(Math.random() * petImages.length)] + `&t=${Date.now()}`;
+  const isLeft = x < w / 3;
+  const isRight = x > (2 * w / 3);
+  const isTop = y < h / 3;
+  const isBottom = y > (2 * h / 3);
+
+  if (isTop && isLeft) return 'doglookingtopleft.jpg';
+  if (isTop && isRight) return 'doglookingtopright.jpg';
+  if (isBottom && isLeft) return 'doglookingbottomleft.jpg';
+  if (isBottom && isRight) return 'doglookingbottomright.jpg';
+
+  // Vertical edges
+  if (isTop) return 'doglookingup.jpg';
+  if (isBottom) return 'doglookingdown.jpg';
+
+  // Center
+  return 'doglookingatyou.jpg';
+}
+
+    function showPetForPosition(x, y) {
+      const oldPet = document.querySelector('.pet');
+      if (oldPet) oldPet.remove();
+
+      const imageName = getDirectionImage(x, y);
+      const img = document.createElement('img');
+      img.src = `images/${imageName}`;
+      img.className = 'pet';
+
+      container.appendChild(img);
     }
 
     let timeout;
     let lastX = 0;
     let lastY = 0;
-
-    function showPetAt(x, y) {
-      const oldPet = document.querySelector('.pet');
-      if (oldPet) oldPet.remove();
-
-      const img = document.createElement('img');
-      img.src = getRandomImage();
-      img.className = 'pet';
-      img.style.left = `${x - 200}px`;
-      img.style.top = `${y - 200}px`;
-
-      container.appendChild(img);
-    }
 
     function startApp() {
       startScreen.style.display = 'none';
@@ -114,8 +120,8 @@
         clearTimeout(timeout);
 
         timeout = setTimeout(() => {
-          showPetAt(lastX, lastY);
-        }, 800);
+          showPetForPosition(lastX, lastY);
+        }, 600);
       });
     }
 
