@@ -11,8 +11,9 @@
       height: 100%;
       overflow: hidden;
       background: #000;
-      font-family: sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+
     #start-screen, #container {
       width: 100vw;
       height: 100vh;
@@ -23,21 +24,28 @@
       align-items: center;
       justify-content: center;
     }
+
     #start-screen {
-      background: #fff;
+      background: linear-gradient(135deg, #f8f8f8, #e0f7fa);
       flex-direction: column;
       text-align: center;
       z-index: 2;
+      animation: fadeIn 1s ease-out;
     }
+
     #start-screen h1 {
       font-size: 3rem;
       margin-bottom: 1rem;
+      animation: slideUp 0.8s ease-out;
     }
+
     #start-screen p {
       font-size: 1.2rem;
       max-width: 500px;
       margin-bottom: 2rem;
+      animation: slideUp 1s ease-out;
     }
+
     #start-button {
       font-size: 1.2rem;
       padding: 0.75rem 1.5rem;
@@ -46,7 +54,19 @@
       color: white;
       border-radius: 5px;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
+
+    #start-button:hover {
+      background: #005fa3;
+    }
+
+    .paw {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      animation: bounce 2s infinite;
+    }
+
     .pet {
       position: absolute;
       width: 100vw;
@@ -56,10 +76,27 @@
       z-index: 1;
       pointer-events: none;
     }
+
+   
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
   <div id="start-screen">
+    <div class="paw">🐾</div>
     <h1>Welcome to Pet Pointer!</h1>
     <p>Inspired by PointerPointer, but with dogs!</p>
     <button id="start-button">Start</button>
@@ -73,26 +110,22 @@
     const container = document.getElementById('container');
 
     function getDirectionImage(x, y) {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
 
-  const isLeft = x < w / 3;
-  const isRight = x > (2 * w / 3);
-  const isTop = y < h / 3;
-  const isBottom = y > (2 * h / 3);
+      const isLeft = x < w / 3;
+      const isRight = x > (2 * w / 3);
+      const isTop = y < h / 3;
+      const isBottom = y > (2 * h / 3);
 
-  if (isTop && isLeft) return 'doglookingtopleft.jpg';
-  if (isTop && isRight) return 'doglookingtopright.jpg';
-  if (isBottom && isLeft) return 'doglookingbottomleft.jpg';
-  if (isBottom && isRight) return 'doglookingbottomright.jpg';
-
-  // Vertical edges
-  if (isTop) return 'doglookingup.jpg';
-  if (isBottom) return 'doglookingdown.jpg';
-
-  // Center
-  return 'doglookingatyou.jpg';
-}
+      if (isTop && isLeft) return 'doglookingtopleft.jpg';
+      if (isTop && isRight) return 'doglookingtopright.jpg';
+      if (isBottom && isLeft) return 'doglookingbottomleft.jpg';
+      if (isBottom && isRight) return 'doglookingbottomright.jpg';
+      if (isTop) return 'doglookingup.jpg';
+      if (isBottom) return 'doglookingdown.jpg';
+      return 'doglookingatyou.jpg';
+    }
 
     function showPetForPosition(x, y) {
       const oldPet = document.querySelector('.pet');
